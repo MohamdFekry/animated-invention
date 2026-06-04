@@ -273,7 +273,7 @@ h3 {
   margin: 34px 0;
 }
 
-.learning-rings span {
+.learning-rings a {
   display: grid;
   min-height: 92px;
   place-items: center;
@@ -282,14 +282,26 @@ h3 {
   color: var(--teal);
   font-weight: 900;
   animation: float-ring 3.5s ease-in-out infinite;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
-.learning-rings span:nth-child(2n) {
+.learning-rings a:nth-child(2n) {
   animation-delay: 0.35s;
 }
 
-.learning-rings span:nth-child(3n) {
+.learning-rings a:nth-child(3n) {
   animation-delay: 0.7s;
+}
+
+.learning-rings a:hover,
+.learning-rings a:focus {
+  border-color: rgba(15, 118, 110, 0.55);
+  box-shadow: 0 12px 26px rgba(15, 118, 110, 0.16);
+  outline: none;
+  transform: translateY(-4px);
 }
 
 @keyframes float-ring {
