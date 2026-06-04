@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lesson 3: CUPED</title>
+    <meta
+      name="description"
+      content="Learn CUPED as a historical baseline adjustment for E2 experiment buckets."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <nav class="top-nav wrap" aria-label="Course navigation">
+        <a class="brand" href="./index.html">E2 Playground</a>
+        <div class="nav-links">
+          <a href="./mix.html">Mix</a>
+          <a href="./weights.html">Weights</a>
+          <a class="active" href="./cuped.html">CUPED</a>
+          <a href="./confidence-intervals.html">CIs</a>
+          <a href="./adjusted-regression.html">Regression</a>
+          <a href="./mlm.html">MLM</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="band lesson-hero">
+        <div class="wrap lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 3</p>
+            <h1>CUPED asks: better or worse than expected?</h1>
+            <p class="lead">
+              Some hours are naturally hard. CUPED compares each bucket with its
+              own historical expectation before comparing treatment and control.
+            </p>
+          </div>
+          <div class="story-card">
+            <p class="eyebrow">The key word</p>
+            <h2>Residual = actual minus baseline.</h2>
+            <p>
+              If dinner peak usually takes 42 minutes and treatment takes 41,
+              treatment was 1 minute better than expected.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band light">
+        <div class="wrap concept-layout">
+          <div class="explain-stack">
+            <div class="explain-card">
+              <p class="eyebrow">Plain English</p>
+              <h3>Do not compare an easy hour to a hard hour raw.</h3>
+              <p>
+                A quiet control hour at 23 minutes can look better than a
+                dinner treatment hour at 41 minutes. But dinner may usually be
+                42 minutes, while quiet hours are usually 22 minutes.
+              </p>
+            </div>
+            <div class="residual-diagram" aria-label="Residual diagram">
+              <div><span>baseline</span><i></i><b>expected</b></div>
+              <strong>then</strong>
+              <div><span>actual</span><i></i><b>observed</b></div>
+              <strong>equals</strong>
+              <div><span>residual</span><i></i><b>surprise</b></div>
+            </div>
+            <div class="formula-card">
+              <span>CUPED effect</span>
+              <b>=</b>
+              <span>treatment residual</span>
+              <b>-</b>
+              <span>control residual</span>
+            </div>
+          </div>
+
+          <div class="lab-panel" data-lab="cuped">
+            <div class="panel-head">
+              <div>
+                <h3>CUPED residual calculator</h3>
+                <p>Raw result vs actual-minus-baseline result.</p>
+              </div>
+              <button class="ghost-button" type="button" data-action="reset-cuped">Reset</button>
+            </div>
+
+            <div class="cuped-bars">
+              <div class="cuped-card">
+                <span>Control quiet hour</span>
+                <strong><b id="cuped-control-actual-label">23</b> min actual</strong>
+                <div class="meter"><span id="cuped-control-actual-bar"></span></div>
+                <small><b id="cuped-control-baseline-label">22</b> min baseline</small>
+              </div>
+              <div class="cuped-card">
+                <span>Treatment dinner peak</span>
+                <strong><b id="cuped-treatment-actual-label">41</b> min actual</strong>
+                <div class="meter treatment"><span id="cuped-treatment-actual-bar"></span></div>
+                <small><b id="cuped-treatment-baseline-label">42</b> min baseline</small>
+              </div>
+            </div>
+
+            <div class="summary-strip">
+              <div>
+                <small>Raw treatment-control</small>
+                <strong id="cuped-raw">+18.0</strong>
+              </div>
+              <div>
+                <small>Control residual</small>
+                <strong id="cuped-control-residual">+1.0</strong>
+              </div>
+              <div>
+                <small>CUPED effect</small>
+                <strong id="cuped-effect">-2.0</strong>
+              </div>
+            </div>
+
+            <div class="controls two-controls">
+              <label>
+                <span>Control actual <b id="cuped-control-actual-read">23 min</b></span>
+                <input id="cuped-control-actual" type="range" min="15" max="55" value="23" step="1" />
+              </label>
+              <label>
+                <span>Treatment actual <b id="cuped-treatment-actual-read">41 min</b></span>
+                <input id="cuped-treatment-actual" type="range" min="15" max="65" value="41" step="1" />
+              </label>
+              <label>
+                <span>Control baseline <b id="cuped-control-baseline-read">22 min</b></span>
+                <input id="cuped-control-baseline" type="range" min="15" max="55" value="22" step="1" />
+              </label>
+              <label>
+                <span>Treatment baseline <b id="cuped-treatment-baseline-read">42 min</b></span>
+                <input id="cuped-treatment-baseline" type="range" min="15" max="65" value="42" step="1" />
+              </label>
+            </div>
+
+            <div class="interpretation" id="cuped-note">
+              Raw says treatment is worse. CUPED says treatment beat its harder
+              baseline.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap simple-grid">
+          <div class="explain-card">
+            <p class="eyebrow">Try this</p>
+            <h3>Raise treatment baseline to 50.</h3>
+            <p>
+              The raw treatment-control gap stays high, but the CUPED effect
+              improves because treatment is doing well versus a harder expected
+              condition.
+            </p>
+          </div>
+          <div class="explain-card">
+            <p class="eyebrow">When it helps</p>
+            <h3>Use it when history predicts the metric.</h3>
+            <p>
+              CUPED helps when fleet, hour, weekday, or load history says a lot
+              about what the bucket would normally look like.
+            </p>
+          </div>
+          <div class="explain-card">
+            <p class="eyebrow">Product lesson</p>
+            <h3>Show raw and CUPED side by side.</h3>
+            <p>
+              Raw is easy to understand. CUPED explains whether each bucket did
+              better or worse than expected.
+            </p>
+          </div>
+        </div>
+        <div class="wrap lesson-nav">
+          <a class="secondary-link" href="./weights.html">Previous: task weighting</a>
+          <a class="primary-link" href="./confidence-intervals.html">Next: confidence intervals</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

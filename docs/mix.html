@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lesson 1: Fleet Mix</title>
+    <meta
+      name="description"
+      content="Learn why global experiment results can change when treatment and control have different fleet mixes."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <nav class="top-nav wrap" aria-label="Course navigation">
+        <a class="brand" href="./index.html">E2 Playground</a>
+        <div class="nav-links">
+          <a class="active" href="./mix.html">Mix</a>
+          <a href="./weights.html">Weights</a>
+          <a href="./cuped.html">CUPED</a>
+          <a href="./confidence-intervals.html">CIs</a>
+          <a href="./adjusted-regression.html">Regression</a>
+          <a href="./mlm.html">MLM</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="band lesson-hero">
+        <div class="wrap lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 1</p>
+            <h1>Fleet mix can bend the global result.</h1>
+            <p class="lead">
+              Treatment can improve inside every fleet and still look less
+              impressive globally. That happens when treatment has more tasks in
+              an expensive fleet.
+            </p>
+          </div>
+          <div class="story-card">
+            <p class="eyebrow">The puzzle</p>
+            <h2>-44 fils globally, but -46 to -52 inside each fleet.</h2>
+            <p>
+              The global number is not the average of the fleet differences. It
+              is a weighted average of fleet CPOs using each variant's task mix.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band light">
+        <div class="wrap concept-layout">
+          <div class="explain-stack">
+            <div class="explain-card">
+              <p class="eyebrow">Plain English</p>
+              <h3>The expensive fleet gets more volume.</h3>
+              <p>
+                Marina costs more in both control and treatment. If treatment
+                handles more Marina tasks, treatment's global average is pulled
+                upward even though treatment still improves Marina itself.
+              </p>
+            </div>
+            <div class="formula-card">
+              <span>global CPO</span>
+              <b>=</b>
+              <span>fleet CPO</span>
+              <b>x</b>
+              <span>fleet task share</span>
+            </div>
+            <div class="mini-comparison" aria-label="Fleet cost comparison">
+              <div><span>Almajaz</span><i style="height: 58%"></i><b>1017</b></div>
+              <div><span>Karama</span><i style="height: 54%"></i><b>1006</b></div>
+              <div><span>Marina</span><i style="height: 88%"></i><b>1119</b></div>
+            </div>
+          </div>
+
+          <div class="lab-panel" data-lab="mix">
+            <div class="panel-head">
+              <div>
+                <h3>Fleet-mix simulator</h3>
+                <p>Control mix is fixed. You control treatment mix.</p>
+              </div>
+              <button class="ghost-button" type="button" data-action="reset-mix">Reset</button>
+            </div>
+
+            <div class="summary-strip">
+              <div>
+                <small>Control weighted CPO</small>
+                <strong id="mix-control-cpo">1039.5</strong>
+              </div>
+              <div>
+                <small>Treatment weighted CPO</small>
+                <strong id="mix-treatment-cpo">996.5</strong>
+              </div>
+              <div>
+                <small>Global diff</small>
+                <strong id="mix-diff">-43.0</strong>
+              </div>
+            </div>
+
+            <div class="mix-bars">
+              <div>
+                <div class="bar-title">
+                  <span>Control</span><span>actual mix</span>
+                </div>
+                <div class="stacked-bar" aria-label="Control fleet mix">
+                  <span class="alma" style="width: 38.8%">38.8%</span>
+                  <span class="kara" style="width: 35.3%">35.3%</span>
+                  <span class="mari" style="width: 25.9%">25.9%</span>
+                </div>
+              </div>
+              <div>
+                <div class="bar-title">
+                  <span>Treatment</span><span>you control this</span>
+                </div>
+                <div class="stacked-bar" aria-label="Treatment fleet mix">
+                  <span id="mix-alma-bar" class="alma">33.7%</span>
+                  <span id="mix-kara-bar" class="kara">35.4%</span>
+                  <span id="mix-mari-bar" class="mari">30.9%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="controls two-controls">
+              <label>
+                <span>Karama treatment share <b id="mix-karama-label">35.4%</b></span>
+                <input id="mix-karama" type="range" min="10" max="60" value="35.4" step="0.1" />
+              </label>
+              <label>
+                <span>Marina treatment share <b id="mix-marina-label">30.9%</b></span>
+                <input id="mix-marina" type="range" min="10" max="60" value="30.9" step="0.1" />
+              </label>
+            </div>
+
+            <div class="interpretation" id="mix-note">
+              Treatment is still better inside every fleet. The global number
+              changes because the fleet mix changes.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap simple-grid">
+          <div class="explain-card">
+            <p class="eyebrow">Read the graph</p>
+            <h3>The orange segment is Marina.</h3>
+            <p>
+              If the orange segment grows in treatment, the treatment global
+              average gets more expensive-fleet volume.
+            </p>
+          </div>
+          <div class="explain-card">
+            <p class="eyebrow">Try this</p>
+            <h3>Move Marina to 45%.</h3>
+            <p>
+              The fleet treatment effects did not change, but the global effect
+              becomes smaller because treatment now has more Marina.
+            </p>
+          </div>
+          <div class="explain-card">
+            <p class="eyebrow">Product lesson</p>
+            <h3>Show fleet-level results first.</h3>
+            <p>
+              Global summaries are useful, but they should not hide where the
+              experiment helped or hurt.
+            </p>
+          </div>
+        </div>
+        <div class="wrap lesson-nav">
+          <a class="secondary-link" href="./index.html">Back to course map</a>
+          <a class="primary-link" href="./weights.html">Next: task weighting</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lesson 2: Task Weighting</title>
+    <meta
+      name="description"
+      content="Learn why high-volume buckets should count more in E2 experiment analysis."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <nav class="top-nav wrap" aria-label="Course navigation">
+        <a class="brand" href="./index.html">E2 Playground</a>
+        <div class="nav-links">
+          <a href="./mix.html">Mix</a>
+          <a class="active" href="./weights.html">Weights</a>
+          <a href="./cuped.html">CUPED</a>
+          <a href="./confidence-intervals.html">CIs</a>
+          <a href="./adjusted-regression.html">Regression</a>
+          <a href="./mlm.html">MLM</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="band lesson-hero">
+        <div class="wrap lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 2</p>
+            <h1>Big buckets should speak louder than tiny buckets.</h1>
+            <p class="lead">
+              A 500-task hour tells us much more about the customer experience
+              than a 5-task hour. Task weighting lets volume matter without
+              pretending every task is independent.
+            </p>
+          </div>
+          <div class="story-card">
+            <p class="eyebrow">Tiny example</p>
+            <h2>5 tasks at 60 min vs 500 tasks at 20 min.</h2>
+            <p>
+              The unweighted average is 40 min. The task-weighted average is
+              only 20.4 min because most tasks came from the busy, fast bucket.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band light">
+        <div class="wrap concept-layout">
+          <div class="explain-stack">
+            <div class="explain-card">
+              <p class="eyebrow">Plain English</p>
+              <h3>Weighting answers “what did most tasks experience?”</h3>
+              <p>
+                Unweighted averages answer “what did the average bucket look
+                like?” That can be useful, but it can overreact to a tiny bucket
+                with a strange value.
+              </p>
+            </div>
+            <div class="formula-card">
+              <span>weighted average</span>
+              <b>=</b>
+              <span>sum(metric x tasks)</span>
+              <b>/</b>
+              <span>sum(tasks)</span>
+            </div>
+            <div class="animated-buckets" aria-hidden="true">
+              <span class="tiny"></span>
+              <span class="busy"></span>
+            </div>
+          </div>
+
+          <div class="lab-panel" data-lab="weights">
+            <div class="panel-head">
+              <div>
+                <h3>Bucket weighting playground</h3>
+                <p>Two buckets, same metric, very different volume.</p>
+              </div>
+              <button class="ghost-button" type="button" data-action="reset-weight">Reset</button>
+            </div>
+
+            <div class="bucket-visual">
+              <div>
+                <span class="bucket-label">Small bucket</span>
+                <div class="bucket-size" id="small-bucket-size"></div>
+                <strong id="small-bucket-text">5 tasks, 60 min</strong>
+              </div>
+              <div>
+                <span class="bucket-label">Busy bucket</span>
+                <div class="bucket-size busy" id="busy-bucket-size"></div>
+                <strong>500 tasks, 20 min</strong>
+              </div>
+            </div>
+
+            <div class="summary-strip">
+              <div>
+                <small>Unweighted</small>
+                <strong id="unweighted-average">40.0</strong>
+              </div>
+              <div>
+                <small>Task-weighted</small>
+                <strong id="weighted-average">20.4</strong>
+              </div>
+              <div>
+                <small>Difference</small>
+                <strong id="weight-gap">19.6</strong>
+              </div>
+            </div>
+
+            <div class="controls two-controls">
+              <label>
+                <span>Small bucket tasks <b id="small-tasks-label">5</b></span>
+                <input id="small-tasks" type="range" min="5" max="500" value="5" step="5" />
+              </label>
+              <label>
+                <span>Small bucket O2D <b id="small-metric-label">60 min</b></span>
+                <input id="small-metric" type="range" min="15" max="80" value="60" step="1" />
+              </label>
+            </div>
+
+            <div class="interpretation" id="weight-note">
+              The small bucket has a loud metric but very little volume. Task
+              weighting keeps it from dominating the business view.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap simple-grid">
+          <div class="explain-card">
+            <p class="eyebrow">Try this</p>
+            <h3>Increase the small bucket to 250 tasks.</h3>
+            <p>
+              Once the small bucket is no longer small, the weighted average
+              starts moving toward the unweighted average.
+            </p>
+          </div>
+          <div class="explain-card">
+            <p class="eyebrow">Careful</p>
+            <h3>Weighting is not task-level inference.</h3>
+            <p>
+              We still respect switchback buckets. The weight only says how
+              much business volume each bucket represents.
+            </p>
+          </div>
+          <div class="explain-card">
+            <p class="eyebrow">Product lesson</p>
+            <h3>Show the weighted result by default.</h3>
+            <p>
+              It is usually closer to the question the business asks: what did
+              customers and tasks actually experience?
+            </p>
+          </div>
+        </div>
+        <div class="wrap lesson-nav">
+          <a class="secondary-link" href="./mix.html">Previous: fleet mix</a>
+          <a class="primary-link" href="./cuped.html">Next: CUPED</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

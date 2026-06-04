@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lesson 5: Adjusted Regression</title>
+    <meta
+      name="description"
+      content="Learn adjusted regression as a way to compare treatment and control under similar conditions."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <nav class="top-nav wrap" aria-label="Course navigation">
+        <a class="brand" href="./index.html">E2 Playground</a>
+        <div class="nav-links">
+          <a href="./mix.html">Mix</a>
+          <a href="./weights.html">Weights</a>
+          <a href="./cuped.html">CUPED</a>
+          <a href="./confidence-intervals.html">CIs</a>
+          <a class="active" href="./adjusted-regression.html">Regression</a>
+          <a href="./mlm.html">MLM</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="band lesson-hero">
+        <div class="wrap lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 5</p>
+            <h1>Adjusted regression asks a fairer comparison question.</h1>
+            <p class="lead">
+              If treatment happens more during dinner peak, raw averages may
+              confuse “treatment is bad” with “dinner peak is hard.”
+            </p>
+          </div>
+          <div class="story-card">
+            <p class="eyebrow">The simple idea</p>
+            <h2>Compare quiet with quiet, and peak with peak.</h2>
+            <p>
+              Regression does that comparison in one model while also adjusting
+              for things like hour, day, load factor, and volume.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band light">
+        <div class="wrap concept-layout">
+          <div class="explain-stack">
+            <div class="explain-card">
+              <p class="eyebrow">Plain English</p>
+              <h3>Raw averages mix together easy and hard hours.</h3>
+              <p>
+                Treatment can look worse if it has more peak-hour buckets. The
+                adjusted view asks: within the same type of hour, did treatment
+                help?
+              </p>
+            </div>
+            <div class="condition-cartoon" aria-label="Condition comparison">
+              <div><b>Quiet</b><span>Control 20.5</span><span>Treatment 18</span></div>
+              <div><b>Peak</b><span>Control 40</span><span>Treatment 38.5</span></div>
+            </div>
+            <div class="formula-card">
+              <span>metric</span>
+              <b>=</b>
+              <span>treatment</span>
+              <b>+</b>
+              <span>hour/load/day</span>
+            </div>
+          </div>
+
+          <div class="lab-panel" data-lab="regression">
+            <div class="panel-head">
+              <div>
+                <h3>Raw vs adjusted comparison</h3>
+                <p>Same one-fleet outcomes, different hour mix.</p>
+              </div>
+              <button class="ghost-button" type="button" data-action="reset-regression">Reset</button>
+            </div>
+
+            <div class="condition-grid">
+              <div>
+                <span>Quiet hour</span>
+                <div class="condition-row"><b>Control</b><div><span style="width: 51%"></span></div><em>20.5</em></div>
+                <div class="condition-row"><b>Treatment</b><div><span class="good" style="width: 45%"></span></div><em>18.0</em></div>
+              </div>
+              <div>
+                <span>Dinner peak</span>
+                <div class="condition-row"><b>Control</b><div><span style="width: 100%"></span></div><em>40.0</em></div>
+                <div class="condition-row"><b>Treatment</b><div><span class="good" style="width: 96%"></span></div><em>38.5</em></div>
+              </div>
+            </div>
+
+            <div class="summary-strip">
+              <div>
+                <small>Control peak share</small>
+                <strong>33%</strong>
+              </div>
+              <div>
+                <small>Raw effect</small>
+                <strong id="reg-raw">+4.7</strong>
+              </div>
+              <div>
+                <small>Adjusted effect</small>
+                <strong id="reg-adjusted">-2.0</strong>
+              </div>
+            </div>
+
+            <div class="controls">
+              <label>
+                <span>Treatment dinner-peak share <b id="reg-peak-label">67%</b></span>
+                <input id="reg-peak-share" type="range" min="0" max="100" value="67" step="1" />
+              </label>
+            </div>
+
+            <div class="raw-adjusted-bars">
+              <div><span id="reg-control-bar"></span><b>Control average</b><em id="reg-control-avg">27.0</em></div>
+              <div><span id="reg-treatment-bar"></span><b>Treatment average</b><em id="reg-treatment-avg">31.7</em></div>
+            </div>
+
+            <div class="interpretation" id="reg-note">
+              Treatment has more peak-hour buckets, so the raw average looks
+              worse than the like-for-like comparison.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap simple-grid">
+          <div class="explain-card">
+            <p class="eyebrow">Try this</p>
+            <h3>Set treatment peak share to 95%.</h3>
+            <p>
+              Raw gets much worse because treatment has mostly hard hours. The
+              adjusted result remains close to the within-hour treatment effect.
+            </p>
+          </div>
+          <div class="explain-card">
+            <p class="eyebrow">When to use it</p>
+            <h3>Use it after filtering or slicing.</h3>
+            <p>
+              Filters can accidentally make treatment and control less
+              comparable. Regression helps protect against that remaining
+              imbalance.
+            </p>
+          </div>
+          <div class="explain-card">
+            <p class="eyebrow">Product lesson</p>
+            <h3>Show raw and adjusted together.</h3>
+            <p>
+              If they disagree, the page should explain which condition mix is
+              causing the disagreement.
+            </p>
+          </div>
+        </div>
+        <div class="wrap lesson-nav">
+          <a class="secondary-link" href="./confidence-intervals.html">Previous: CIs</a>
+          <a class="primary-link" href="./mlm.html">Next: MLM</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

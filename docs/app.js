@@ -1,4 +1,5 @@
 const qs = (selector) => document.querySelector(selector);
+const exists = (selector) => Boolean(qs(selector));
 
 const fmt = (value, digits = 1, sign = false) => {
   const rounded = Number(value).toFixed(digits);
@@ -27,6 +28,7 @@ function weighted(values, weights) {
 }
 
 function updateMix() {
+  if (!exists("#mix-karama") || !exists("#mix-marina")) return;
   const karamaInput = qs("#mix-karama");
   const marinaInput = qs("#mix-marina");
   let kara = Number(karamaInput.value);
@@ -71,6 +73,7 @@ function updateMix() {
 }
 
 function updateWeights() {
+  if (!exists("#small-tasks") || !exists("#small-metric")) return;
   const smallTasks = Number(qs("#small-tasks").value);
   const smallMetric = Number(qs("#small-metric").value);
   const busyTasks = 500;
@@ -100,6 +103,14 @@ function updateWeights() {
 }
 
 function updateCuped() {
+  if (
+    !exists("#cuped-control-actual") ||
+    !exists("#cuped-treatment-actual") ||
+    !exists("#cuped-control-baseline") ||
+    !exists("#cuped-treatment-baseline")
+  ) {
+    return;
+  }
   const controlActual = Number(qs("#cuped-control-actual").value);
   const treatmentActual = Number(qs("#cuped-treatment-actual").value);
   const controlBaseline = Number(qs("#cuped-control-baseline").value);
@@ -139,6 +150,7 @@ function updateCuped() {
 }
 
 function updateCi() {
+  if (!exists("#ci-effect") || !exists("#ci-buckets") || !exists("#ci-noise")) return;
   const effect = Number(qs("#ci-effect").value);
   const buckets = Number(qs("#ci-buckets").value);
   const noise = Number(qs("#ci-noise").value);
@@ -169,6 +181,7 @@ function updateCi() {
 }
 
 function updateRegression() {
+  if (!exists("#reg-peak-share")) return;
   const treatmentPeakShare = Number(qs("#reg-peak-share").value) / 100;
   const controlPeakShare = 1 / 3;
   const quietControl = 20.5;
@@ -198,6 +211,7 @@ function updateRegression() {
 }
 
 function updateMlm() {
+  if (!exists("#mlm-buckets") || !exists("#mlm-effect")) return;
   const buckets = Number(qs("#mlm-buckets").value);
   const observed = Number(qs("#mlm-effect").value);
   const overall = -1.5;
@@ -226,32 +240,39 @@ function updateMlm() {
 
 function resetValues(values) {
   Object.entries(values).forEach(([selector, value]) => {
-    qs(selector).value = value;
+    if (exists(selector)) qs(selector).value = value;
   });
 }
 
 function init() {
-  ["#mix-karama", "#mix-marina"].forEach((selector) => qs(selector).addEventListener("input", updateMix));
-  ["#small-tasks", "#small-metric"].forEach((selector) => qs(selector).addEventListener("input", updateWeights));
+  const onInput = (selector, handler) => {
+    if (exists(selector)) qs(selector).addEventListener("input", handler);
+  };
+  const onClick = (selector, handler) => {
+    if (exists(selector)) qs(selector).addEventListener("click", handler);
+  };
+
+  ["#mix-karama", "#mix-marina"].forEach((selector) => onInput(selector, updateMix));
+  ["#small-tasks", "#small-metric"].forEach((selector) => onInput(selector, updateWeights));
   [
     "#cuped-control-actual",
     "#cuped-treatment-actual",
     "#cuped-control-baseline",
     "#cuped-treatment-baseline",
-  ].forEach((selector) => qs(selector).addEventListener("input", updateCuped));
-  ["#ci-effect", "#ci-buckets", "#ci-noise"].forEach((selector) => qs(selector).addEventListener("input", updateCi));
-  qs("#reg-peak-share").addEventListener("input", updateRegression);
-  ["#mlm-buckets", "#mlm-effect"].forEach((selector) => qs(selector).addEventListener("input", updateMlm));
+  ].forEach((selector) => onInput(selector, updateCuped));
+  ["#ci-effect", "#ci-buckets", "#ci-noise"].forEach((selector) => onInput(selector, updateCi));
+  onInput("#reg-peak-share", updateRegression);
+  ["#mlm-buckets", "#mlm-effect"].forEach((selector) => onInput(selector, updateMlm));
 
-  qs('[data-action="reset-mix"]').addEventListener("click", () => {
+  onClick('[data-action="reset-mix"]', () => {
     resetValues({ "#mix-karama": 35.4, "#mix-marina": 30.9 });
     updateMix();
   });
-  qs('[data-action="reset-weight"]').addEventListener("click", () => {
+  onClick('[data-action="reset-weight"]', () => {
     resetValues({ "#small-tasks": 5, "#small-metric": 60 });
     updateWeights();
   });
-  qs('[data-action="reset-cuped"]').addEventListener("click", () => {
+  onClick('[data-action="reset-cuped"]', () => {
     resetValues({
       "#cuped-control-actual": 23,
       "#cuped-treatment-actual": 41,
@@ -260,15 +281,15 @@ function init() {
     });
     updateCuped();
   });
-  qs('[data-action="reset-ci"]').addEventListener("click", () => {
+  onClick('[data-action="reset-ci"]', () => {
     resetValues({ "#ci-effect": 1.2, "#ci-buckets": 100, "#ci-noise": 4 });
     updateCi();
   });
-  qs('[data-action="reset-regression"]').addEventListener("click", () => {
+  onClick('[data-action="reset-regression"]', () => {
     resetValues({ "#reg-peak-share": 67 });
     updateRegression();
   });
-  qs('[data-action="reset-mlm"]').addEventListener("click", () => {
+  onClick('[data-action="reset-mlm"]', () => {
     resetValues({ "#mlm-buckets": 4, "#mlm-effect": -8 });
     updateMlm();
   });

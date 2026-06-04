@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lesson 4: Confidence Intervals</title>
+    <meta
+      name="description"
+      content="Learn confidence intervals as uncertainty ranges for E2 experiment effects."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <nav class="top-nav wrap" aria-label="Course navigation">
+        <a class="brand" href="./index.html">E2 Playground</a>
+        <div class="nav-links">
+          <a href="./mix.html">Mix</a>
+          <a href="./weights.html">Weights</a>
+          <a href="./cuped.html">CUPED</a>
+          <a class="active" href="./confidence-intervals.html">CIs</a>
+          <a href="./adjusted-regression.html">Regression</a>
+          <a href="./mlm.html">MLM</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="band lesson-hero">
+        <div class="wrap lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 4</p>
+            <h1>A result needs a range, not just one number.</h1>
+            <p class="lead">
+              A point estimate is our best guess. A confidence interval tells us
+              how much room there is for the true effect to be different.
+            </p>
+          </div>
+          <div class="story-card">
+            <p class="eyebrow">Simple reading rule</p>
+            <h2>If the range crosses zero, be careful.</h2>
+            <p>
+              Crossing zero means the data still allows “no real effect” or an
+              effect in the opposite direction.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band light">
+        <div class="wrap concept-layout">
+          <div class="explain-stack">
+            <div class="explain-card">
+              <p class="eyebrow">Plain English</p>
+              <h3>The dot is the estimate. The line is uncertainty.</h3>
+              <p>
+                More buckets and less noise make the line shorter. Fewer
+                buckets and more noise make the line longer.
+              </p>
+            </div>
+            <div class="ci-explainer" aria-label="Confidence interval example">
+              <div class="ci-mini-line"><i style="left: 56%; width: 26%"></i><b style="left: 68%"></b></div>
+              <p>Short line: easier to trust.</p>
+              <div class="ci-mini-line wide"><i style="left: 32%; width: 58%"></i><b style="left: 68%"></b></div>
+              <p>Wide line: still uncertain.</p>
+            </div>
+            <div class="formula-card">
+              <span>more buckets</span>
+              <b>+</b>
+              <span>less noise</span>
+              <b>=</b>
+              <span>tighter CI</span>
+            </div>
+          </div>
+
+          <div class="lab-panel" data-lab="ci">
+            <div class="panel-head">
+              <div>
+                <h3>CI width simulator</h3>
+                <p>A simple bucket-level approximation for intuition.</p>
+              </div>
+              <button class="ghost-button" type="button" data-action="reset-ci">Reset</button>
+            </div>
+
+            <div class="ci-plot" aria-label="Confidence interval plot">
+              <div class="axis-line"></div>
+              <div class="zero-line"></div>
+              <div class="ci-band" id="ci-band"></div>
+              <div class="ci-dot" id="ci-dot"></div>
+              <div class="axis-labels"><span>-4</span><span>0</span><span>+4</span></div>
+            </div>
+
+            <div class="summary-strip">
+              <div>
+                <small>Estimate</small>
+                <strong id="ci-estimate-read">+1.2</strong>
+              </div>
+              <div>
+                <small>95% CI</small>
+                <strong id="ci-range">+0.4 to +2.0</strong>
+              </div>
+              <div>
+                <small>Status</small>
+                <strong id="ci-status">Conclusive</strong>
+              </div>
+            </div>
+
+            <div class="controls three-controls">
+              <label>
+                <span>Effect estimate <b id="ci-effect-label">+1.2</b></span>
+                <input id="ci-effect" type="range" min="-3" max="3" value="1.2" step="0.1" />
+              </label>
+              <label>
+                <span>Bucket count <b id="ci-buckets-label">100</b></span>
+                <input id="ci-buckets" type="range" min="12" max="240" value="100" step="4" />
+              </label>
+              <label>
+                <span>Bucket noise <b id="ci-noise-label">4.0</b></span>
+                <input id="ci-noise" type="range" min="1" max="10" value="4" step="0.2" />
+              </label>
+            </div>
+
+            <div class="interpretation" id="ci-note">
+              The interval is entirely above zero, so this looks conclusive.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap simple-grid">
+          <div class="explain-card">
+            <p class="eyebrow">Try this</p>
+            <h3>Lower bucket count to 12.</h3>
+            <p>
+              The estimate stays the same, but the interval gets wider. The
+              conclusion becomes less confident.
+            </p>
+          </div>
+          <div class="explain-card">
+            <p class="eyebrow">Switchback care</p>
+            <h3>Use bucket-level uncertainty.</h3>
+            <p>
+              Do not calculate a naive task-level CI that pretends every task is
+              a fully independent experiment.
+            </p>
+          </div>
+          <div class="explain-card">
+            <p class="eyebrow">Product lesson</p>
+            <h3>Show estimate plus CI for every metric.</h3>
+            <p>
+              A metric card without uncertainty can make a weak result look too
+              certain.
+            </p>
+          </div>
+        </div>
+        <div class="wrap lesson-nav">
+          <a class="secondary-link" href="./cuped.html">Previous: CUPED</a>
+          <a class="primary-link" href="./adjusted-regression.html">Next: adjusted regression</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

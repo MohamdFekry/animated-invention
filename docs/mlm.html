@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lesson 6: MLM</title>
+    <meta
+      name="description"
+      content="Learn MLM partial pooling as a way to handle small-sample fleet effects."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <nav class="top-nav wrap" aria-label="Course navigation">
+        <a class="brand" href="./index.html">E2 Playground</a>
+        <div class="nav-links">
+          <a href="./mix.html">Mix</a>
+          <a href="./weights.html">Weights</a>
+          <a href="./cuped.html">CUPED</a>
+          <a href="./confidence-intervals.html">CIs</a>
+          <a href="./adjusted-regression.html">Regression</a>
+          <a class="active" href="./mlm.html">MLM</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="band lesson-hero">
+        <div class="wrap lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 6</p>
+            <h1>MLM keeps tiny fleet results humble.</h1>
+            <p class="lead">
+              A fleet with four buckets can look extreme by chance. A
+              multilevel model partially pulls small-sample estimates toward
+              the overall pattern.
+            </p>
+          </div>
+          <div class="story-card">
+            <p class="eyebrow">The simple idea</p>
+            <h2>Big samples speak for themselves. Small samples borrow strength.</h2>
+            <p>
+              This is called partial pooling. It is powerful, but it is also
+              harder to explain, so it should be a later E2 feature.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="band light">
+        <div class="wrap concept-layout">
+          <div class="explain-stack">
+            <div class="explain-card">
+              <p class="eyebrow">Plain English</p>
+              <h3>Do not overreact to tiny slices.</h3>
+              <p>
+                Fleet C might show -8 minutes with only four buckets. That does
+                not mean we should fully trust -8. MLM asks how much evidence
+                the fleet has before trusting its extreme result.
+              </p>
+            </div>
+            <div class="shrink-demo" aria-label="Shrinkage demonstration">
+              <span>observed</span>
+              <i></i>
+              <span>pooled</span>
+              <b>toward overall</b>
+            </div>
+            <div class="formula-card">
+              <span>small sample</span>
+              <b>=</b>
+              <span>more shrinkage</span>
+              <b>toward</b>
+              <span>overall effect</span>
+            </div>
+          </div>
+
+          <div class="lab-panel" data-lab="mlm">
+            <div class="panel-head">
+              <div>
+                <h3>Partial-pooling simulator</h3>
+                <p>A small-sample fleet effect gets shrunk toward overall.</p>
+              </div>
+              <button class="ghost-button" type="button" data-action="reset-mlm">Reset</button>
+            </div>
+
+            <div class="mlm-plot" aria-label="MLM shrinkage plot">
+              <div class="axis-line"></div>
+              <div class="zero-line"></div>
+              <div class="overall-line"></div>
+              <div class="mlm-point observed-point" id="mlm-observed"></div>
+              <div class="mlm-point pooled-point" id="mlm-pooled"></div>
+              <div class="axis-labels"><span>-10</span><span>0</span><span>+10</span></div>
+            </div>
+
+            <div class="summary-strip">
+              <div>
+                <small>Observed fleet effect</small>
+                <strong id="mlm-observed-read">-8.0</strong>
+              </div>
+              <div>
+                <small>Pooled estimate</small>
+                <strong id="mlm-pooled-read">-3.0</strong>
+              </div>
+              <div>
+                <small>Shrinkage</small>
+                <strong id="mlm-shrinkage-read">63%</strong>
+              </div>
+            </div>
+
+            <div class="controls two-controls">
+              <label>
+                <span>Fleet buckets <b id="mlm-buckets-label">4</b></span>
+                <input id="mlm-buckets" type="range" min="2" max="150" value="4" step="1" />
+              </label>
+              <label>
+                <span>Observed effect <b id="mlm-effect-label">-8 min</b></span>
+                <input id="mlm-effect" type="range" min="-10" max="10" value="-8" step="0.5" />
+              </label>
+            </div>
+
+            <div class="legend-row">
+              <span><i class="observed-key"></i>Observed</span>
+              <span><i class="pooled-key"></i>MLM estimate</span>
+              <span><i class="overall-key"></i>Overall effect (-1.5)</span>
+            </div>
+
+            <div class="interpretation" id="mlm-note">
+              With only a few buckets, the fleet estimate should be treated as
+              suggestive, not definitive.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="wrap simple-grid">
+          <div class="explain-card">
+            <p class="eyebrow">Try this</p>
+            <h3>Set buckets to 2 and effect to +10.</h3>
+            <p>
+              The observed result is extreme, but the pooled estimate moves back
+              toward the overall effect because the sample is tiny.
+            </p>
+          </div>
+          <div class="explain-card">
+            <p class="eyebrow">When to use it</p>
+            <h3>Use it when many fleets are small.</h3>
+            <p>
+              If each fleet has enough data, fleet-level analysis plus CIs may
+              be enough for the first version.
+            </p>
+          </div>
+          <div class="explain-card">
+            <p class="eyebrow">Product lesson</p>
+            <h3>Keep MLM as an advanced option.</h3>
+            <p>
+              It is statistically useful, but harder to explain. Add it after
+              the simpler E2 workflow is trusted.
+            </p>
+          </div>
+        </div>
+        <div class="wrap lesson-nav">
+          <a class="secondary-link" href="./adjusted-regression.html">Previous: adjusted regression</a>
+          <a class="primary-link" href="./index.html">Back to course map</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
