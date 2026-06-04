@@ -1,0 +1,963 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>E2 Experiment Analysis Concepts</title>
+    <meta
+      name="description"
+      content="A learnable guide to adjusted regression, CUPED, confidence intervals, and MLM for E2 switchback analysis."
+    />
+    <style>
+      :root {
+        --paper: #f7f4ee;
+        --ink: #0f172a;
+        --muted: #475569;
+        --line: #d8dee8;
+        --white: #ffffff;
+        --teal: #0f766e;
+        --teal-soft: #ccfbf1;
+        --emerald: #10b981;
+        --cyan: #06b6d4;
+        --amber: #f59e0b;
+        --rose: #e11d48;
+        --slate: #334155;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: Arial, Helvetica, sans-serif;
+        letter-spacing: 0;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .wrap {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: var(--teal);
+        font-size: 0.82rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .hero {
+        border-bottom: 1px solid var(--line);
+        background: var(--white);
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 40px;
+        padding: 40px 0;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 22px;
+        max-width: 720px;
+        font-size: 4rem;
+        line-height: 1.18;
+      }
+
+      h2 {
+        margin-bottom: 16px;
+        font-size: 2rem;
+        line-height: 1.2;
+      }
+
+      h3 {
+        margin-bottom: 10px;
+        font-size: 1.25rem;
+      }
+
+      .lead {
+        max-width: 660px;
+        color: var(--muted);
+        font-size: 1.08rem;
+        line-height: 1.75;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 30px;
+      }
+
+      .stat,
+      .panel,
+      .module,
+      .flow li {
+        border: 1px solid var(--line);
+        background: var(--white);
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+      }
+
+      .stat {
+        padding: 16px;
+      }
+
+      .stat small {
+        display: block;
+        color: #64748b;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .stat strong {
+        display: block;
+        margin-top: 8px;
+        font-size: 1.85rem;
+      }
+
+      .stat span {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.45;
+      }
+
+      .mix {
+        border: 1px solid var(--line);
+        background: #f8fafc;
+        padding: 22px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+      }
+
+      .mix-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 18px;
+      }
+
+      .marina-box {
+        min-width: 140px;
+        background: #fef3c7;
+        padding: 12px;
+        text-align: right;
+      }
+
+      .marina-box small {
+        display: block;
+        color: #92400e;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .marina-box strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 1.35rem;
+      }
+
+      .bars {
+        margin-top: 22px;
+      }
+
+      .bar-row {
+        margin-bottom: 18px;
+      }
+
+      .bar-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        color: var(--slate);
+        font-size: 0.92rem;
+        font-weight: 700;
+      }
+
+      .bar {
+        display: flex;
+        height: 36px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        background: var(--white);
+      }
+
+      .bar span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      .legend {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-top: 18px;
+      }
+
+      .legend-item {
+        border: 1px solid var(--line);
+        background: var(--white);
+        padding: 12px;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .dot {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        margin-right: 8px;
+        vertical-align: -1px;
+      }
+
+      .green {
+        background: var(--emerald);
+      }
+
+      .blue {
+        background: var(--cyan);
+      }
+
+      .orange {
+        background: var(--amber);
+      }
+
+      .section {
+        padding: 56px 0;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 36px;
+        align-items: start;
+      }
+
+      .copy p {
+        color: var(--muted);
+        font-size: 1rem;
+        line-height: 1.7;
+      }
+
+      .mini-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+      }
+
+      .table-scroll {
+        margin-top: 28px;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        background: var(--white);
+      }
+
+      table {
+        width: 100%;
+        min-width: 780px;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid #edf1f7;
+        padding: 14px;
+        text-align: left;
+        font-size: 0.92rem;
+      }
+
+      th {
+        background: #f1f5f9;
+        color: var(--slate);
+        font-size: 0.82rem;
+        text-transform: uppercase;
+      }
+
+      .toolkit {
+        background: var(--ink);
+        color: white;
+      }
+
+      .toolkit .eyebrow {
+        color: #5eead4;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-top: 30px;
+      }
+
+      .card {
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.08);
+        padding: 18px;
+      }
+
+      .card p {
+        color: #cbd5e1;
+        line-height: 1.6;
+      }
+
+      .card .metric {
+        margin-top: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(0, 0, 0, 0.18);
+        padding: 12px;
+      }
+
+      .module {
+        padding: 20px;
+      }
+
+      .compare {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+
+      .soft {
+        border: 1px solid var(--line);
+        background: #f8fafc;
+        padding: 16px;
+      }
+
+      .big-green {
+        color: #047857;
+        font-size: 1.55rem;
+        font-weight: 800;
+      }
+
+      .big-red {
+        color: #be123c;
+        font-size: 1.55rem;
+        font-weight: 800;
+      }
+
+      .meter {
+        height: 14px;
+        margin-top: 8px;
+        background: #e2e8f0;
+      }
+
+      .meter span {
+        display: block;
+        height: 14px;
+      }
+
+      .ci-box {
+        margin-bottom: 14px;
+        border: 1px solid var(--line);
+        background: var(--white);
+        padding: 16px;
+      }
+
+      .axis {
+        position: relative;
+        height: 44px;
+        margin-top: 18px;
+      }
+
+      .axis:before {
+        position: absolute;
+        top: 22px;
+        right: 0;
+        left: 0;
+        height: 2px;
+        background: #cbd5e1;
+        content: "";
+      }
+
+      .zero {
+        position: absolute;
+        top: 10px;
+        left: 30%;
+        height: 26px;
+        border-left: 1px solid #64748b;
+      }
+
+      .ci {
+        position: absolute;
+        top: 21px;
+        height: 4px;
+      }
+
+      .estimate {
+        position: absolute;
+        top: 9px;
+        width: 10px;
+        height: 28px;
+      }
+
+      .reg-bars {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      .mlm-row {
+        border: 1px solid var(--line);
+        background: var(--white);
+        padding: 14px;
+      }
+
+      .mlm-axis {
+        position: relative;
+        height: 42px;
+        margin: 10px 0 4px;
+      }
+
+      .mlm-axis:before {
+        position: absolute;
+        top: 20px;
+        right: 0;
+        left: 0;
+        height: 2px;
+        background: #dbe3ec;
+        content: "";
+      }
+
+      .mlm-axis:after {
+        position: absolute;
+        top: 7px;
+        left: 50%;
+        height: 28px;
+        border-left: 1px solid #64748b;
+        content: "";
+      }
+
+      .point {
+        position: absolute;
+        top: 10px;
+        width: 20px;
+        height: 20px;
+      }
+
+      .observed {
+        border: 2px solid var(--rose);
+        background: #ffe4e6;
+      }
+
+      .pooled {
+        border: 2px solid var(--teal);
+        background: var(--teal-soft);
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .flow li {
+        display: flex;
+        gap: 12px;
+        padding: 14px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .flow b {
+        display: inline-flex;
+        width: 30px;
+        height: 30px;
+        flex: 0 0 30px;
+        align-items: center;
+        justify-content: center;
+        background: var(--ink);
+        color: white;
+      }
+
+      .footer-note {
+        margin-top: 28px;
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.6;
+      }
+
+      @media (max-width: 900px) {
+        .hero-grid,
+        .two-col,
+        .compare,
+        .reg-bars {
+          grid-template-columns: 1fr;
+        }
+
+        .cards,
+        .mini-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 640px) {
+        .wrap {
+          width: min(100% - 40px, 1180px);
+        }
+
+        .hero-grid {
+          gap: 28px;
+          padding: 38px 0;
+        }
+
+        h1 {
+          font-size: 2.35rem;
+          line-height: 1.18;
+        }
+
+        h2 {
+          font-size: 1.75rem;
+        }
+
+        .lead {
+          font-size: 1rem;
+        }
+
+        .stats,
+        .cards,
+        .mini-grid,
+        .legend,
+        .flow {
+          grid-template-columns: 1fr;
+        }
+
+        .mix-head {
+          flex-direction: column;
+        }
+
+        .marina-box {
+          text-align: left;
+        }
+
+        .bar span {
+          font-size: 0.68rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow">E2 Analysis Recommendations</p>
+          <h1>Make experiment results explain themselves.</h1>
+          <p class="lead">
+            A practical guide to reading switchback experiments with adjusted
+            regression, CUPED, confidence intervals, and MLM. Every concept
+            starts from the same concrete question: did treatment really help?
+          </p>
+          <div class="stats">
+            <div class="stat">
+              <small>Global CPO</small>
+              <strong>-44 fils</strong>
+              <span>Treatment improved globally</span>
+            </div>
+            <div class="stat">
+              <small>Fleet diffs</small>
+              <strong>-46 to -52</strong>
+              <span>Every fleet improved more</span>
+            </div>
+            <div class="stat">
+              <small>Why</small>
+              <strong>+5.0 pts</strong>
+              <span>Treatment had more Marina mix</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mix" aria-label="Fleet task mix comparison">
+          <div class="mix-head">
+            <div>
+              <h2>The mix puzzle</h2>
+              <p class="lead">
+                Marina is the highest-cost fleet, and treatment had more of it.
+              </p>
+            </div>
+            <div class="marina-box">
+              <small>Marina mix</small>
+              <strong>25.9% to 30.9%</strong>
+            </div>
+          </div>
+
+          <div class="bars">
+            <div class="bar-row">
+              <div class="bar-label">
+                <span>Control</span>
+                <span>162,086 tasks</span>
+              </div>
+              <div class="bar">
+                <span class="green" style="width: 38.8%">38.8%</span>
+                <span class="blue" style="width: 35.3%">35.3%</span>
+                <span class="orange" style="width: 25.9%">25.9%</span>
+              </div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">
+                <span>Treatment</span>
+                <span>320,343 tasks</span>
+              </div>
+              <div class="bar">
+                <span class="green" style="width: 33.7%">33.7%</span>
+                <span class="blue" style="width: 35.4%">35.4%</span>
+                <span class="orange" style="width: 30.9%">30.9%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="legend">
+            <div class="legend-item">
+              <b><i class="dot green"></i>Almajaz</b><br />
+              1017 to 971 fils<br />
+              <strong style="color: #047857">-47 fils</strong>
+            </div>
+            <div class="legend-item">
+              <b><i class="dot blue"></i>Karama</b><br />
+              1006 to 954 fils<br />
+              <strong style="color: #047857">-52 fils</strong>
+            </div>
+            <div class="legend-item">
+              <b><i class="dot orange"></i>Marina</b><br />
+              1119 to 1073 fils<br />
+              <strong style="color: #047857">-46 fils</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="wrap two-col">
+          <div class="copy">
+            <p class="eyebrow">Start Here</p>
+            <h2>Global results are weighted averages of different task mixes.</h2>
+            <p>
+              The global treatment result can be smaller than every fleet-level
+              result because control and treatment do not contain the same
+              proportions of each fleet. This is a Simpson's-paradox-style
+              aggregation effect.
+            </p>
+          </div>
+          <div class="mini-grid">
+            <div class="stat">
+              <small>Control weighted CPO</small>
+              <strong>1039.5</strong>
+              <span>(fleet CPO x tasks) / control tasks</span>
+            </div>
+            <div class="stat">
+              <small>Treatment weighted CPO</small>
+              <strong>996.5</strong>
+              <span>(fleet CPO x tasks) / treatment tasks</span>
+            </div>
+            <div class="stat">
+              <small>Weighted diff</small>
+              <strong>-43.0</strong>
+              <span>Close to the displayed -44 fils</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="wrap table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Fleet</th>
+                <th>Control CPO</th>
+                <th>Control tasks</th>
+                <th>Treatment CPO</th>
+                <th>Treatment tasks</th>
+                <th>Fleet diff</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Almajaz</strong></td>
+                <td>1017</td>
+                <td>62,929</td>
+                <td>971</td>
+                <td>107,885</td>
+                <td><strong style="color: #047857">-47 fils</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Karama</strong></td>
+                <td>1006</td>
+                <td>57,257</td>
+                <td>954</td>
+                <td>113,333</td>
+                <td><strong style="color: #047857">-52 fils</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Marina</strong></td>
+                <td>1119</td>
+                <td>41,900</td>
+                <td>1073</td>
+                <td>99,125</td>
+                <td><strong style="color: #047857">-46 fils</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section toolkit">
+        <div class="wrap">
+          <p class="eyebrow">The Toolkit</p>
+          <h2>
+            Four methods, one product principle: compare like with like and
+            show uncertainty.
+          </h2>
+          <div class="cards">
+            <article class="card">
+              <p class="eyebrow">CUPED</p>
+              <h3>Compare every bucket against historical expectation.</h3>
+              <p>Useful when hour, weekday, fleet, or load history predicts the metric.</p>
+              <div class="metric">Raw +18 min<br /><strong>Adjusted -2 min</strong></div>
+            </article>
+            <article class="card">
+              <p class="eyebrow">CIs</p>
+              <h3>Show the likely range, not only the point estimate.</h3>
+              <p>A positive-looking estimate is weak if the interval crosses zero.</p>
+              <div class="metric">Estimate +1.2 min<br /><strong>CI +0.4 to +2.0</strong></div>
+            </article>
+            <article class="card">
+              <p class="eyebrow">Adjusted Regression</p>
+              <h3>Compare treatment and control inside similar conditions.</h3>
+              <p>Protects fleet slices from hour, day, load, and volume imbalance.</p>
+              <div class="metric">Raw +4.7 worse<br /><strong>Adjusted about -2</strong></div>
+            </article>
+            <article class="card">
+              <p class="eyebrow">MLM</p>
+              <h3>Pool information across fleets when some slices are small.</h3>
+              <p>Powerful, but harder to explain. Keep it for an advanced version.</p>
+              <div class="metric">Observed Fleet C -8<br /><strong>MLM maybe -3</strong></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap two-col">
+          <div class="copy">
+            <p class="eyebrow">CUPED</p>
+            <h2>Ask how each bucket performed versus history.</h2>
+            <p>
+              Raw comparisons can punish treatment for landing in harder hours.
+              CUPED subtracts an expected baseline first, then compares
+              treatment and control residuals.
+            </p>
+          </div>
+          <div class="compare">
+            <div class="module">
+              <h3>Raw comparison</h3>
+              <p>Control quiet hour: 23 min</p>
+              <div class="meter"><span class="blue" style="width: 38%"></span></div>
+              <p style="margin-top: 16px">Treatment dinner peak: 41 min</p>
+              <div class="meter"><span style="width: 68%; background: var(--rose)"></span></div>
+              <p class="big-red" style="margin-top: 18px">Treatment looks +18 min worse</p>
+            </div>
+            <div class="module">
+              <h3>CUPED view</h3>
+              <div class="soft">Control: 23 - 22 baseline = <strong style="color: #be123c">+1 min</strong></div>
+              <div class="soft" style="margin-top: 10px">Treatment: 41 - 42 baseline = <strong style="color: #047857">-1 min</strong></div>
+              <p class="big-green" style="margin-top: 18px">Treatment looks about 2 min better</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" style="background: white; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line)">
+        <div class="wrap two-col">
+          <div class="copy">
+            <p class="eyebrow">Confidence Intervals</p>
+            <h2>Separate promising from conclusive.</h2>
+            <p>
+              A point estimate says what happened in the sample. A confidence
+              interval shows the range still compatible with the data. For
+              switchbacks, calculate it from fleet-hour or fleet-day buckets.
+            </p>
+          </div>
+          <div>
+            <div class="ci-box">
+              <h3>Conclusive example</h3>
+              <div class="axis">
+                <span class="zero"></span>
+                <span class="ci" style="left: 55%; width: 34%; background: var(--emerald)"></span>
+                <span class="estimate" style="left: 71%; background: #047857"></span>
+              </div>
+              <p><strong>Treatment improves O2D by +1.2 min; CI +0.4 to +2.0.</strong></p>
+            </div>
+            <div class="ci-box" style="background: #f8fafc">
+              <h3>Less conclusive example</h3>
+              <div class="axis">
+                <span class="zero"></span>
+                <span class="ci" style="left: 14%; width: 78%; background: var(--amber)"></span>
+                <span class="estimate" style="left: 58%; background: #b45309"></span>
+              </div>
+              <p><strong>Treatment improves O2D by +1.2 min; CI -0.8 to +3.2.</strong></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap two-col">
+          <div class="copy">
+            <p class="eyebrow">Adjusted Regression</p>
+            <h2>Compare treatment within similar hours and conditions.</h2>
+            <p>
+              Adjusted regression estimates treatment after accounting for hour
+              of day, day of week, load factor, and volume. Inside one fleet,
+              no fleet adjustment is needed because there is only one fleet.
+            </p>
+          </div>
+          <div class="module">
+            <div class="compare">
+              <div class="soft">
+                <p class="eyebrow">Raw average</p>
+                <p>Control: (20 + 21 + 40) / 3 = 27.0</p>
+                <p>Treatment: (18 + 38 + 39) / 3 = 31.7</p>
+                <p class="big-red">+4.7 min worse</p>
+              </div>
+              <div class="soft">
+                <p class="eyebrow">Adjusted comparison</p>
+                <p>Quiet: treatment 18 vs control 20.5 = -2.5</p>
+                <p>Peak: treatment 38.5 vs control 40 = -1.5</p>
+                <p class="big-green">About -2 min better</p>
+              </div>
+            </div>
+            <div class="reg-bars">
+              <div class="soft">
+                <h3>Quiet hour</h3>
+                <p>Control 20.5</p>
+                <div class="meter"><span style="width: 41%; background: var(--slate)"></span></div>
+                <p>Treatment 18</p>
+                <div class="meter"><span style="width: 36%; background: var(--emerald)"></span></div>
+                <p><strong style="color: #047857">-2.5 min</strong></p>
+              </div>
+              <div class="soft">
+                <h3>Dinner peak</h3>
+                <p>Control 40</p>
+                <div class="meter"><span style="width: 80%; background: var(--slate)"></span></div>
+                <p>Treatment 38.5</p>
+                <div class="meter"><span style="width: 77%; background: var(--emerald)"></span></div>
+                <p><strong style="color: #047857">-1.5 min</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" style="background: white; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line)">
+        <div class="wrap two-col">
+          <div class="copy">
+            <p class="eyebrow">MLM</p>
+            <h2>Borrow strength when fleet samples are uneven.</h2>
+            <p>
+              Multilevel models estimate overall and fleet-specific effects in
+              one hierarchy. The main user-facing idea is partial pooling: tiny
+              samples should not get the same trust as large samples.
+            </p>
+          </div>
+          <div class="module" style="background: #f8fafc">
+            <div class="mlm-row">
+              <strong>Fleet A</strong> <span style="color: var(--muted)">100 buckets</span>
+              <div class="mlm-axis">
+                <span class="point observed" style="left: calc(42% - 10px)"></span>
+                <span class="point pooled" style="left: calc(42% - 10px)"></span>
+              </div>
+              Observed -2 min; MLM estimate maybe -2 min.
+            </div>
+            <div class="mlm-row" style="margin-top: 10px">
+              <strong>Fleet B</strong> <span style="color: var(--muted)">100 buckets</span>
+              <div class="mlm-axis">
+                <span class="point observed" style="left: calc(46% - 10px)"></span>
+                <span class="point pooled" style="left: calc(46% - 10px)"></span>
+              </div>
+              Observed -1 min; MLM estimate maybe -1 min.
+            </div>
+            <div class="mlm-row" style="margin-top: 10px">
+              <strong>Fleet C</strong> <span style="color: var(--muted)">4 buckets</span>
+              <div class="mlm-axis">
+                <span class="point observed" style="left: calc(18% - 10px)"></span>
+                <span class="point pooled" style="left: calc(38% - 10px)"></span>
+              </div>
+              Observed -8 min; MLM estimate maybe -3 min.
+            </div>
+            <div class="mlm-row" style="margin-top: 10px">
+              <strong>Fleet D</strong> <span style="color: var(--muted)">4 buckets</span>
+              <div class="mlm-axis">
+                <span class="point observed" style="left: calc(70% - 10px)"></span>
+                <span class="point pooled" style="left: calc(50% - 10px)"></span>
+              </div>
+              Observed +5 min; MLM estimate maybe 0 min.
+            </div>
+            <p class="footer-note">
+              Rose squares are observed effects. Teal squares are the MLM
+              estimates after partial pooling.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap two-col">
+          <div class="copy">
+            <p class="eyebrow">Recommended Version</p>
+            <h2>Build trust in layers.</h2>
+            <p>
+              The first E2 version should stay practical: explain per-fleet
+              results, weight by task volume, show uncertainty, and add
+              adjustments where filters or slices leave imbalance.
+            </p>
+          </div>
+          <ol class="flow">
+            <li><b>1</b> Filter experiment data</li>
+            <li><b>2</b> Show fleet/hour and load-factor imbalance diagnostics</li>
+            <li><b>3</b> Compute task-count weighted averages</li>
+            <li><b>4</b> Put fleet-level results before global numbers</li>
+            <li><b>5</b> Add confidence intervals</li>
+            <li><b>6</b> Add CUPED-adjusted results</li>
+            <li><b>7</b> Use adjusted regression for fleet-level slices</li>
+            <li><b>8</b> Keep MLM as an advanced future option</li>
+          </ol>
+        </div>
+        <div class="wrap">
+          <p class="footer-note">
+            Source: E2_ANALYSIS_RECOMMENDATIONS.md, prepared June 02, 2026.
+            This static page is ready for GitHub Pages.
+          </p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
