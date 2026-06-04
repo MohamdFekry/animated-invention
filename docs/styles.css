@@ -273,13 +273,15 @@ h3 {
   margin: 34px 0;
 }
 
-.learning-rings a {
+.learning-rings a,
+.learning-rings span {
   display: grid;
   min-height: 92px;
   place-items: center;
   border: 2px solid rgba(15, 118, 110, 0.2);
   background: linear-gradient(135deg, #ffffff, #e8fbf8);
   color: var(--teal);
+  cursor: pointer;
   font-weight: 900;
   animation: float-ring 3.5s ease-in-out infinite;
   transition:
@@ -288,20 +290,31 @@ h3 {
     box-shadow 160ms ease;
 }
 
-.learning-rings a:nth-child(2n) {
+.learning-rings a:nth-child(2n),
+.learning-rings span:nth-child(2n) {
   animation-delay: 0.35s;
 }
 
-.learning-rings a:nth-child(3n) {
+.learning-rings a:nth-child(3n),
+.learning-rings span:nth-child(3n) {
   animation-delay: 0.7s;
 }
 
 .learning-rings a:hover,
-.learning-rings a:focus {
+.learning-rings a:focus,
+.learning-rings span:hover,
+.learning-rings span:focus {
+  background: linear-gradient(135deg, #e6fbf7, #ffffff);
   border-color: rgba(15, 118, 110, 0.55);
   box-shadow: 0 12px 26px rgba(15, 118, 110, 0.16);
+  color: #0a5f58;
   outline: none;
   transform: translateY(-4px);
+}
+
+.learning-rings a:active,
+.learning-rings span:active {
+  transform: translateY(0) scale(0.98);
 }
 
 @keyframes float-ring {
